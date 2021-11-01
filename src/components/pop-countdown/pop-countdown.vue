@@ -1,17 +1,18 @@
 <template>
-  <div class="pop-count" >
-    <el-dialog :visible.sync="countDownVisible" center :before-close="handleClose" width="600px" v-if="confirmInfo && confirmInfo.from">
+  <div class="pop-count">
+    <el-dialog :visible.sync="countDownVisible" center :close-on-click-modal="false" :before-close="handleClose"
+      width="600px" v-if="confirmInfo && confirmInfo.from">
       <div slot="title" class="countBox">
         <div class="count-item">
-          {{hours}}
+          {{countTimes.hours}}
         </div>
         <span class="mx-1">:</span>
         <div class="count-item">
-          {{minutes}}
+          {{countTimes.minutes}}
         </div>
         <span class="mx-1">:</span>
         <div class="count-item">
-          {{seconds}}
+          {{countTimes.seconds}}
         </div>
       </div>
       <div class="mainBox">
@@ -30,7 +31,9 @@
           <span class="txt-remind">Please transfer through your wallet to avoid loss.</span>
         </div> -->
         <div class="btnBox">
-          <el-button class="btn-confirm">View Transaction</el-button>
+          <el-button class="btn-confirm">
+            <a :href="viewTxRUL" target="_blank">View Transaction</a>
+          </el-button>
         </div>
       </div>
     </el-dialog>
@@ -41,10 +44,7 @@
   export default {
     data() {
       return {
-        maxtime: 10*60,
-        hours:'00',
-        minutes:'00',
-        seconds:'00',
+
       }
     },
     props: {
@@ -52,38 +52,44 @@
         type: Boolean,
         default: false
       },
+      txHash: {
+        type: String
+      },
+      countTimes: {
+        type: Object,
+        default: {
+          hours: '00',
+          minutes: '00',
+          seconds: '00',
+        }
+      },
       confirmInfo: {
         type: Object
       }
     },
-
-    watch: {
-      countDownVisible(newVal,oldVal) {
-        if (newVal) {
-          this.timer = setInterval(() => {
-            this.countDown()
-          }, 1000);
+    computed: {
+      viewTxRUL() {
+        let url;
+        switch (this.confirmInfo.from.chain) {
+          case 'Moonriver':
+            url = 'https://blockscout.moonriver.moonbeam.network/tx/' + this.txHash + '/internal-transactions';
+            break;
+          case 'Matic Mainnet':
+            url = ' https://polygonscan.com/tx/' + this.txHash;
+            break;
         }
+        return url;
       }
     },
-   
+    watch: {
+
+    },
+
     methods: {
       handleClose() {
         this.$emit('handleCountClose')
       },
-      countDown() {
-        if (this.maxtime >= 0) {
-          var hours = Math.floor(this.maxtime / 60 / 60);
-          var minutes = Math.floor(this.maxtime / 60);
-          var seconds = Math.floor(this.maxtime % 60);
-          this.hours = hours < 10 ? ('0' + hours) : hours;
-          this.minutes = minutes < 10 ? ('0' + minutes) : minutes;
-          this.seconds = seconds < 10 && seconds >= 0 ? ('0' + seconds) : seconds;
-          --this.maxtime;
-        } else {
-          clearInterval(this.timer);
-        }
-      }
+
     }
   }
 </script>
@@ -162,6 +168,7 @@
     .mainBox {
       padding: 30px;
       box-sizing: border-box;
+
       .title {
         width: 400px;
         margin: 0 auto;
@@ -171,6 +178,7 @@
         color: #FFFFFF;
         line-height: 20px;
       }
+
       .amount-title {
         margin-top: 35px;
         text-align: center;
@@ -179,15 +187,18 @@
         color: #FFFFFF;
         line-height: 28px;
       }
+
       .amount {
         margin-top: 15px;
         display: flex;
         align-items: center;
         justify-content: center;
+
         .img-asset {
           width: 44px;
           height: 44px;
         }
+
         .number {
           margin-left: 15px;
           font-size: 36px;
@@ -195,6 +206,7 @@
           line-height: 43px;
         }
       }
+
       .mind-loss {
         margin-top: 25px;
         padding: 0 22px;
@@ -206,10 +218,12 @@
         background: rgba(46, 20, 67, 0.5);
         border-radius: 10px;
         border: 2px solid #B707F8;
+
         .img-remind {
           width: 20px;
           height: 20px;
         }
+
         .txt-remind {
           margin-left: 10px;
           font-size: 14px;
@@ -218,6 +232,7 @@
           line-height: 24px;
         }
       }
+
       .btnBox {
         margin-top: 38px;
         width: 100%;
@@ -231,13 +246,20 @@
         color: #FFFFFF;
         line-height: 28px;
         overflow: hidden;
+        a {
+          color: #FFFFFF;
+          text-decoration: none;
+        }
         .el-button {
           width: 100%;
           height: 100%;
           color: #FFFFFF;
           background: linear-gradient(160deg, #DC19C1 0%, #121FF0 100%);
         }
-        .el-button.is-disabled, .el-button.is-disabled:focus, .el-button.is-disabled:hover {
+
+        .el-button.is-disabled,
+        .el-button.is-disabled:focus,
+        .el-button.is-disabled:hover {
           border-radius: 10px;
           background: rgba(255, 255, 255, 0.3);
         }

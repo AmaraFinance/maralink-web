@@ -10,6 +10,7 @@ let networkVersion;
 window.addEventListener("load", async () => {
 
   // Modern dapp browsers...
+  // store.dispatch(constants.SESSION_TX);
   if (window.ethereum) {
     networkVersion = window.ethereum.networkVersion
     // console.log('chainId', window.ethereum.chainId)
@@ -20,7 +21,6 @@ window.addEventListener("load", async () => {
       await ethereum.enable();
       // Acccounts now exposed
       store.dispatch(constants.SESSION_CONNECT_WEB3);
-
     } catch (error) {
       console.log(error)
       // User denied account access...
@@ -45,20 +45,25 @@ window.addEventListener("load", async () => {
   // Legacy dapp browsers...
   else if (window.web3) {
     window.web3 = new Web3(web3.currentProvider);
-    console.log(window.web3);
     var accounts = web3.eth.accounts;
-    console.log(accounts)
     // Acccounts always exposed
   }
   // Non-dapp browsers...
   else {
-    console.log(
-      "Non-Ethereum browser detected. You should consider trying MetaMask!"
-    );
-    return;
+   Vue.prototype.$confirm('Non-Ethereum browser detected. You should consider trying MetaMask!', 'Reminder', {
+     confirmButtonText: 'confirm',
+     cancelButtonText: 'cancel',
+     type: 'warning'
+   }).then(() => {
+     window.open(
+       'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=zh-CN',
+       '_blank')
+       return;
+   }).catch(() => {
+   
+   });
   }
 });
-
 
 
 const state = {
@@ -70,6 +75,7 @@ const state = {
   symbol: null,
   language: 'en',
   networkVersion: null,
+  txList: []
 };
 
 const actions = {
@@ -79,16 +85,16 @@ const actions = {
     state
   }) => {
     web3.eth.getAccounts().then(([account]) => {
-      commit(constants.SESSION_SET_PROPERTY, {
-        account
-      });
-      return Vue.$amaraToken.eventualSymbol;
-    }).then((symbol) => {
-      commit(constants.TOKEN_SYMBOL, {
-        symbol
-      });
-      commit(constants.SET_NETWORKVERSION, networkVersion);
-    })
+        commit(constants.SESSION_SET_PROPERTY, {
+          account
+        });
+        return Vue.$amaraToken.eventualSymbol;
+      }).then((symbol) => {
+        commit(constants.TOKEN_SYMBOL, {
+          symbol
+        });
+        commit(constants.SET_NETWORKVERSION, networkVersion);
+      })
       .catch(() => {
         commit(constants.SESSION_SET_PROPERTY, {
           isOwner: false
@@ -96,6 +102,18 @@ const actions = {
       });
 
   },
+  [constants.SESSION_TX]: ({
+    commit,
+    state
+  }) => {
+    let txListFromLocal = localStorage.getItem("txList");
+    txListFromLocal = JSON.parse(txListFromLocal);
+    if (txListFromLocal && txListFromLocal.length) {
+      commit(constants.SESSION_SET_TX, txListFromLocal[txListFromLocal.length - 1]);
+    }
+
+  }
+
 };
 
 const mutations = {
@@ -117,7 +135,7 @@ const mutations = {
     console.log(language)
     state.language = language;
     Vue._i18n.locale = language;
-    uni.setStorageSync('language', language);
+    //uni.setStorageSync('language', language);
   },
   [constants.CHANGE_WALLET]: (state, {
     wallet
@@ -127,6 +145,20 @@ const mutations = {
   [constants.SET_NETWORKVERSION]: (state,
     networkVersion) => {
     state.networkVersion = networkVersion;
+  },
+  [constants.SESSION_SET_TX]: (state, tx) => {
+    let idx = state.txList.findIndex((item) => item.txHash == tx.txHash);
+    if (idx == -1) {
+      state.txList.push(tx);
+      localStorage.setItem("txList", JSON.stringify(state.txList));
+    }
+  },
+  [constants.SESSION_DELETE_TX]: (state, tx) => {
+    let idx = state.txList.findIndex((item) => item.txHash == tx.txHash);
+    if (idx >= 0) {
+      state.txList.splice(idx, 1);
+    }
+    localStorage.setItem("txList", JSON.stringify(state.txList));
   },
 };
 

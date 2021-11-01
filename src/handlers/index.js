@@ -30,6 +30,10 @@ const internalSend = (signature, from) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
+export const selfSend = (signature, from) =>  {
+  return signature
+}
+
 /**
  * Will send a transaction to the smart contract and execute its method. Note this can alter
  * the smart contract state.

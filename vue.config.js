@@ -16,7 +16,7 @@ function resolve (dir) {
 module.exports = {
   lintOnSave: false,
   chainWebpack: config => {
-    config.module.rules.delete('svg') 
+    config.module.rules.delete('svg')
     config.module
       .rule('svg-sprite-loader')
       .test(/\.svg$/)
@@ -73,6 +73,9 @@ module.exports = {
     },
     plugins: [
       new (require('webpack-bundle-analyzer').BundleAnalyzerPlugin)({
+        analyzerHost: '127.0.0.1',
+        analyzerPort: 8889,
+        analyzerMode: 'server',
         openAnalyzer: false
       })
     ],
