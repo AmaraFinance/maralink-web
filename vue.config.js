@@ -73,9 +73,6 @@ module.exports = {
     },
     plugins: [
       new (require('webpack-bundle-analyzer').BundleAnalyzerPlugin)({
-        analyzerHost: '127.0.0.1',
-        analyzerPort: 8889,
-        analyzerMode: 'server',
         openAnalyzer: false
       })
     ],

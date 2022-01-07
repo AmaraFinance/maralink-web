@@ -3,8 +3,7 @@ import * as constants from '@/store/constants';
 const state = {
   markets: [],
   factor: 1e18,
-  mantissa: 1e18,
-  txList:[]
+  mantissa: 1e18
 };
 
 const actions = {
@@ -62,7 +61,6 @@ const mutations = {
   [constants.CONTROLLER_SET_MARKET_TOTAL_SUPPLIES]: (state, { marketIndex, marketSupplies }) => {
     state.markets[marketIndex].supplied = Number(marketSupplies);
   }
-  
 };
 
 const getters = {};

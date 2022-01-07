@@ -11,7 +11,7 @@ import axios from 'axios'
 
 let config = {
   // baseURL: process.env.VUE_APP_API || '',
-  baseURL: 'http://18.118.34.14:17999/',
+  baseURL: 'http://3.16.187.251:17999/',
   // baseURL: process.env || '',
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control

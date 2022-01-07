@@ -7,8 +7,6 @@ import TokenContract from '@/contracts/LendHub.json';
 export default class Token {
   constructor(address = '') {
     this.internalAddress = address; // TODO .toLowerCase();
-    let isAddress = web3.utils.isAddress(this.address);
-    if (!isAddress) return console.log('Error address');
     if (!this.address.match(/0x[a-fA-F0-9]{40}/)) return new Error('Missing token address');
     this.instance = new web3.eth.Contract(TokenContract.abi, address);
   }

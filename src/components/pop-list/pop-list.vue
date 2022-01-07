@@ -9,7 +9,8 @@
         </div>
       </div>
       <div class="main">
-        <div class="asset-item" v-for="(item,index) in searchList.length ? searchList: assetList" :key="index" @click="selectAsset(index,item)">
+        <!-- <div class="asset-item" v-for="(item,index) in searchList.length ? searchList: assetList" :key="index" @click="selectAsset(index,item)"> -->
+        <div class="asset-item" v-for="(item,index) in searchList.length ? searchList: assetList" :key="index">
           <div class="d-flex">
             <img :src="item.assets_logo" style="width: 35px;height:35px;">
             <div class="d-flex flex-column ml-1">
@@ -32,18 +33,11 @@
       return {
         assetValue: '',
         searchList:[],
-        assetList: [
-          {
-            symbol: "MOVR",
-            name: "Moonbase Alpha",
-            assets_logo: require("../../assets/coins/moon.png"),
-            checked: false,
-          },
-          {
+        assetList: [{
             symbol: "USDT",
             name: "Tether USD",
             assets_logo: require("../../assets/coins/usdt.png"),
-            checked: false,
+            checked: true,
           },
           // {
           //   symbol: "BTC",
@@ -51,18 +45,18 @@
           //   assets_logo: require("../../assets/coins/btc.png"),
           //   checked: false,
           // },
-          {
-            symbol: "DOT",
-            name: "Polkadot Token",
-            assets_logo: require("../../assets/coins/polkadot.png"),
-            checked: false,
-          },
-          {
-            symbol: "KSM",
-            name: "Kusama",
-            assets_logo: require("../../assets/coins/kusama.png"),
-            checked: false,
-          },
+          // {
+          //   symbol: "DOT",
+          //   name: "Polkadot Token",
+          //   assets_logo: require("../../assets/coins/polkadot.png"),
+          //   checked: false,
+          // },
+          // {
+          //   symbol: "KSM",
+          //   name: "Kusama",
+          //   assets_logo: require("../../assets/coins/kusama.png"),
+          //   checked: false,
+          // },
         ]
       }
     },

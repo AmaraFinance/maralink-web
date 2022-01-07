@@ -1,18 +1,17 @@
 <template>
   <div class="pop-count">
-    <el-dialog :visible.sync="countDownVisible" center :close-on-click-modal="false" :before-close="handleClose"
-      width="600px" v-if="confirmInfo && confirmInfo.from">
+    <el-dialog :visible.sync="countDownVisible" center :close-on-click-modal="false" :before-close="handleClose" width="600px"  v-if="confirmInfo && confirmInfo.from">
       <div slot="title" class="countBox">
         <div class="count-item">
-          {{countTimes.hours}}
+          {{hours}}
         </div>
         <span class="mx-1">:</span>
         <div class="count-item">
-          {{countTimes.minutes}}
+          {{minutes}}
         </div>
         <span class="mx-1">:</span>
         <div class="count-item">
-          {{countTimes.seconds}}
+          {{seconds}}
         </div>
       </div>
       <div class="mainBox">
@@ -22,18 +21,16 @@
         <div class="amount-title">
           Amount
         </div>
-        <div class="amount">
+        <!-- <div class="amount">
           <img :src="confirmInfo.from.logo" class="img-asset">
           <span class="number">{{confirmInfo.transferAmount}} {{confirmInfo.selectedAsset.symbol}}</span>
-        </div>
+        </div> -->
         <!-- <div class="mind-loss">
           <img src="../../assets/coins/remind.png" class="img-remind">
           <span class="txt-remind">Please transfer through your wallet to avoid loss.</span>
         </div> -->
         <div class="btnBox">
-          <el-button class="btn-confirm">
-            <a :href="viewTxRUL" target="_blank">View Transaction</a>
-          </el-button>
+          <el-button class="btn-confirm">View Transaction</el-button>
         </div>
       </div>
     </el-dialog>
@@ -44,7 +41,11 @@
   export default {
     data() {
       return {
-
+        maxtime: '',
+        hours: '00',
+        minutes: '00',
+        seconds: '00',
+        InitialTime: 10 * 60,
       }
     },
     props: {
@@ -52,44 +53,55 @@
         type: Boolean,
         default: false
       },
-      txHash: {
-        type: String
-      },
-      countTimes: {
-        type: Object,
-        default: {
-          hours: '00',
-          minutes: '00',
-          seconds: '00',
-        }
-      },
       confirmInfo: {
         type: Object
       }
     },
-    computed: {
-      viewTxRUL() {
-        let url;
-        switch (this.confirmInfo.from.chain) {
-          case 'Moonriver':
-            url = 'https://blockscout.moonriver.moonbeam.network/tx/' + this.txHash + '/internal-transactions';
-            break;
-          case 'Matic Mainnet':
-            url = ' https://polygonscan.com/tx/' + this.txHash;
-            break;
-        }
-        return url;
+
+    watch: {
+      countDownVisible: {
+        handler(newVal, oldVal) {
+          if (newVal) {
+            this.timer = setInterval(() => {
+              this.countDown()
+            }, 1000);
+          } else {
+            this.maxtime = this.InitialTime;
+            clearInterval(this.timer);
+          }
+        },
+        immediate: true,
       }
     },
-    watch: {
-
+    mounted() {
+      this.maxtime = this.InitialTime;
     },
-
     methods: {
       handleClose() {
         this.$emit('handleCountClose')
       },
-
+      countDown() {
+        if (this.maxtime >= 0) {
+          var secondTime = parseInt(this.maxtime);
+          var minuteTime = 0;
+          var hourTime = 0;
+          if (secondTime > 60) {
+            minuteTime = parseInt(secondTime / 60);
+            secondTime = parseInt(secondTime % 60);
+            if (minuteTime > 60) {
+              hourTime = parseInt(minuteTime / 60);
+              minuteTime = parseInt(minuteTime % 60);
+            }
+          }
+          this.hours = hourTime < 10 ? ('0' + hourTime) : hourTime;
+          this.minutes = minuteTime < 10 ? ('0' + minuteTime) : minuteTime;
+          this.seconds = secondTime < 10 && secondTime >= 0 ? ('0' + secondTime) : secondTime;
+          --this.maxtime;
+        } else {
+          this.maxtime = this.InitialTime;
+          clearInterval(this.timer);
+        }
+      }
     }
   }
 </script>
@@ -246,10 +258,7 @@
         color: #FFFFFF;
         line-height: 28px;
         overflow: hidden;
-        a {
-          color: #FFFFFF;
-          text-decoration: none;
-        }
+
         .el-button {
           width: 100%;
           height: 100%;

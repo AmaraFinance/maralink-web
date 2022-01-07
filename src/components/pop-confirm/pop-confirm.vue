@@ -1,6 +1,6 @@
 <template>
   <div class="w-popup">
-    <el-dialog title="Confirm"  :visible.sync="confirmDialogVisible"  center :before-close="handleClose" :width="size == 'small' ? '510px':'600px'" :close-on-click-modal="false" v-if="confirmInfo && confirmInfo.selectedAsset">
+    <el-dialog title="Confirm"  :visible.sync="confirmDialogVisible"  center :before-close="handleClose" :width="size == 'small' ? '510px':'600px'" v-if="confirmInfo && confirmInfo.selectedAsset">
       <div class="content" style="padding: 60px 30px 30px;">
         <div class="amountBox">
           <span>{{confirmInfo.transferAmount}} {{confirmInfo.selectedAsset.symbol}}</span>
